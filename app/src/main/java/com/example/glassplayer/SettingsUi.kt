@@ -241,7 +241,7 @@ fun AudioFx(p: Player, act: Actions) {
     val ui = p.ui
     var name by remember { mutableStateOf("") }
     Panel("Equalizer") {
-        Toggle("Equalizer", fx.on) { fx.setOn(it) }
+        Toggle("Equalizer", fx.on) { fx.updateOn(it) }
         if (fx.levels.isEmpty()) Note("Play a song once to unlock the bands.")
         else {
             ChipRow { fx.presets.forEach { (n, c) -> Chip(n, false) { fx.preset(c) } } }
@@ -251,8 +251,8 @@ fun AudioFx(p: Player, act: Actions) {
         }
     }
     Panel("Effects") {
-        Knob("Bass boost", fx.bass.toFloat(), 0f..1000f, { fx.setBass(it.toInt()) }, {})
-        Knob("Virtualizer (wider sound)", fx.virt.toFloat(), 0f..1000f, { fx.setVirt(it.toInt()) }, {})
+        Knob("Bass boost", fx.bass.toFloat(), 0f..1000f, { fx.updateBass(it.toInt()) }, {})
+        Knob("Virtualizer (wider sound)", fx.virt.toFloat(), 0f..1000f, { fx.updateVirt(it.toInt()) }, {})
         Note("Effects your device doesn't support are skipped.")
     }
     Panel("My EQ profiles") {
@@ -269,10 +269,10 @@ fun AudioFx(p: Player, act: Actions) {
 @Composable
 fun PlaybackSettings(p: Player) {
     Panel("Crossfade") {
-        Knob(if (p.xfade == 0) "Crossfade: off" else "Crossfade: ${p.xfade} s", p.xfade.toFloat(), 0f..12f, { p.setXfade(it.toInt()) }, {})
+        Knob(if (p.xfade == 0) "Crossfade: off" else "Crossfade: ${p.xfade} s", p.xfade.toFloat(), 0f..12f, { p.updateXfade(it.toInt()) }, {})
         Note("Fades the end of a song into the next, including when you skip. The equalizer and visualizer move to the new song when the fade starts.")
     }
-    Panel("Speed") { ChipRow { listOf(0.75f, 1f, 1.25f, 1.5f, 2f).forEach { s -> Chip("${s}x", p.speed == s) { p.setSpeed(s) } } } }
+    Panel("Speed") { ChipRow { listOf(0.75f, 1f, 1.25f, 1.5f, 2f).forEach { s -> Chip("${s}x", p.speed == s) { p.updateSpeed(s) } } } }
     Panel("Sleep timer") { ChipRow { listOf(0, 15, 30, 60).forEach { m -> Chip(if (m == 0) "Off" else "${m} min", p.sleepMin == m) { p.setSleep(m) } } } }
     Panel("Session") {
         Toggle("Resume last queue and position on launch", p.ui.restore) { p.ui.restore = it; p.ui.save() }

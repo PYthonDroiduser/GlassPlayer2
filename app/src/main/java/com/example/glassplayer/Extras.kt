@@ -91,13 +91,13 @@ class Fx(private val prefs: SharedPreferences) {
         }
     }
 
-    fun setOn(v: Boolean) { on = v; runCatching { eq?.enabled = v }; save() }
-    fun setBass(v: Int) {
+    fun updateOn(v: Boolean) { on = v; runCatching { eq?.enabled = v }; save() }
+    fun updateBass(v: Int) {
         bass = v
         runCatching { bb?.apply { enabled = v > 0; if (strengthSupported) setStrength(v.toShort()) } }
         save()
     }
-    fun setVirt(v: Int) {
+    fun updateVirt(v: Int) {
         virt = v
         runCatching { vz?.apply { enabled = v > 0; if (strengthSupported) setStrength(v.toShort()) } }
         save()

@@ -267,10 +267,10 @@ class Player(private val ctx: Context) {
 
     fun pause() { val m = mp ?: return; if (m.isPlaying) m.pause(); playing = false; saveState(); sync() }
     fun resume() { if (!playing) toggle() }
-    fun setSpeed(s: Float) { speed = s; applySpeed() }
+    fun updateSpeed(s: Float) { speed = s; applySpeed() }
     fun setSleep(m: Int) { sleepMin = m; sleepAt = if (m > 0) System.currentTimeMillis() + m * 60_000L else 0L }
 
-    fun setXfade(s: Int) { xfade = s; prefs.edit().putInt("xfade", s).apply() }
+    fun updateXfade(s: Int) { xfade = s; prefs.edit().putInt("xfade", s).apply() }
     fun cycleXfade() { val o = listOf(0, 3, 6, 9, 12); setXfade(o[(o.indexOf(xfade) + 1) % o.size]) }
 
     private fun nextIndex(): Int {
