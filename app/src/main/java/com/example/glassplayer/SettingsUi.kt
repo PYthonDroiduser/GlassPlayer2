@@ -127,7 +127,7 @@ fun SettingsBody(p: Player, pickBg: () -> Unit, modifier: Modifier) {
         }
         item {
             Panel("Equalizer") {
-                Toggle("Equalizer", fx.on) { fx.setOn(it) }
+                Toggle("Equalizer", fx.on) { fx.applyOn(it) }
                 if (fx.levels.isEmpty()) {
                     Text("Play a song once to unlock the bands.", color = Color.White.copy(0.6f), fontSize = 12.sp)
                 } else {
@@ -138,8 +138,8 @@ fun SettingsBody(p: Player, pickBg: () -> Unit, modifier: Modifier) {
                         Knob(fx.freqs.getOrElse(b) { "Band ${b + 1}" }, lv.toFloat(), fx.min.toFloat()..fx.max.toFloat(), { fx.setBand(b, it.toInt()) }, {})
                     }
                 }
-                Knob("Bass boost", fx.bass.toFloat(), 0f..1000f, { fx.setBass(it.toInt()) }, {})
-                Knob("Virtualizer (wider sound)", fx.virt.toFloat(), 0f..1000f, { fx.setVirt(it.toInt()) }, {})
+                Knob("Bass boost", fx.bass.toFloat(), 0f..1000f, { fx.applyBass(it.toInt()) }, {})
+                Knob("Virtualizer (wider sound)", fx.virt.toFloat(), 0f..1000f, { fx.applyVirt(it.toInt()) }, {})
             }
         }
     }
