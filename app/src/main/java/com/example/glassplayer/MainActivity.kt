@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -481,7 +482,7 @@ fun App(p: Player) {
                         Nav.SEARCH -> SearchScreen(p, act, { menu = it }, { newPl = true })
                         Nav.LIBRARY -> LibraryScreen(p, act, libTab, { libTab = it }, libOpen, { libOpen = it }, { menu = it }, { newPl = true })
                         Nav.SETTINGS -> Column {
-                            GlassButton("‹ Back") { nav = Nav.HOME }
+                            GlassButton("Back", R.drawable.ic_back) { nav = Nav.HOME }
                             Spacer(Modifier.height(12.dp))
                             SettingsBody(p, act, Modifier.weight(1f))
                         }
@@ -494,69 +495,6 @@ fun App(p: Player) {
         }
         menu?.let { t -> TrackMenu(p, t, if (nav == Nav.LIBRARY && libTab == Tab.LISTS) libOpen else null) { menu = null } }
         if (newPl) NewPlaylistDialog(p) { newPl = false }
-        }
-    }
-}
-
-@Composable
-fun NowPlaying(p: Player) {
-    val t = p.current
-    Column(
-        Modifier.fillMaxWidth().glass(RoundedCornerShape(32.dp)).padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        val art by produceState<Bitmap?>(null, t?.uri) { value = t?.let { p.covers.art(it) } }
-        val spin by rememberInfiniteTransition(label = "spin").animateFloat(0f, 360f, infiniteRepeatable(tween(12000, easing = LinearEasing)), label = "s")
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                Modifier.size(110.dp).rotate(if (p.ui.vinyl && p.playing) spin else 0f)
-                    .clip(if (p.ui.vinyl) CircleShape else RoundedCornerShape(22.dp))
-                    .background(Brush.linearGradient(listOf(p.accent(t), Color(0xFF1B1B2F)))),
-                contentAlignment = Alignment.Center,
-            ) {
-                val a = art
-                if (a != null) Image(a.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-                else Text("♪", color = Color.White.copy(0.85f), fontSize = 48.sp)
-            }
-            Spacer(Modifier.width(14.dp))
-            Column(Modifier.weight(1f)) {
-                Text(t?.title ?: "Nothing playing", color = Color.White, fontSize = 19.sp, fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                Text(t?.artist ?: "Pick a song to start", color = Color.White.copy(0.7f), fontSize = 14.sp, maxLines = 1)
-                if (t != null) Text(t.album, color = Color.White.copy(0.5f), fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            }
-            if (t != null) Text(
-                if (p.isFav(t)) "♥" else "♡", color = if (p.isFav(t)) Color(0xFFFF5C8A) else Color.White,
-                fontSize = 26.sp, modifier = Modifier.clickable { p.toggleFav(t) }.padding(8.dp),
-            )
-        }
-        val dur = (t?.durationMs ?: 0L).coerceAtLeast(1L)
-        Slider(
-            value = (p.position.toFloat() / dur).coerceIn(0f, 1f),
-            onValueChange = { p.seek((it * dur).toLong()) },
-            colors = SliderDefaults.colors(
-                thumbColor = Color.White,
-                activeTrackColor = Color.White,
-                inactiveTrackColor = Color.White.copy(0.25f),
-            ),
-        )
-        Row(Modifier.fillMaxWidth()) {
-            Text(fmt(p.position), color = Color.White.copy(0.7f), fontSize = 12.sp, modifier = Modifier.weight(1f))
-            Text(fmt(t?.durationMs ?: 0L), color = Color.White.copy(0.7f), fontSize = 12.sp)
-        }
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
-            Ctrl("⇄", p.shuffle) { p.toggleShuffle() }
-            Ctrl("⏮", false) { p.prev() }
-            Box(
-                Modifier.size(64.dp).glass(CircleShape).clickable { p.toggle() },
-                contentAlignment = Alignment.Center,
-            ) { Text(if (p.playing) "❚❚" else "▶", color = Color.White, fontSize = 22.sp) }
-            Ctrl("⏭", false) { p.next() }
-            Ctrl(if (p.loop == Loop.ONE) "↻1" else "↻", p.loop != Loop.OFF) { p.cycleLoop() }
-        }
-        Spacer(Modifier.height(8.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Chip("${p.speed}x", p.speed != 1f) { p.cycleSpeed() }
-            Chip(if (p.sleepMin > 0) "Sleep ${p.sleepMin}m" else "Sleep off", p.sleepMin > 0) { p.cycleSleep() }
         }
     }
 }
@@ -578,7 +516,7 @@ fun Body(
                     .map { it.key to it.value.size }.sortedBy { it.first.lowercase() }
             }
         LazyColumn(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (tab == Tab.LISTS) item { GlassButton("＋ New playlist", onNew) }
+            if (tab == Tab.LISTS) item { GlassButton("New playlist", R.drawable.ic_add, onNew) }
             items(names) { (n, c) ->
                 Row(
                     Modifier.fillMaxWidth().glass(RoundedCornerShape(22.dp)).clickable { setOpen(n) }.padding(16.dp),
@@ -604,7 +542,7 @@ fun Body(
     }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         if (open != null) Row(verticalAlignment = Alignment.CenterVertically) {
-            GlassButton("‹ Back") { setOpen(null) }
+            GlassButton("Back", R.drawable.ic_back) { setOpen(null) }
             Text(open, color = Color.White, fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f).padding(horizontal = 12.dp), maxLines = 1, overflow = TextOverflow.Ellipsis)
             if (tab == Tab.LISTS) GlassButton("Delete") { p.deletePlaylist(open); setOpen(null) }
         }
@@ -637,7 +575,6 @@ fun TrackList(p: Player, list: List<Track>, onPlay: (Int) -> Unit, onMenu: (Trac
     }
     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         itemsIndexed(list) { i, t ->
-            val art by produceState<Bitmap?>(null, t.uri) { value = p.covers.art(t) }
             val sel = t.uri == p.current?.uri
             Row(
                 Modifier.fillMaxWidth().glass(RoundedCornerShape(22.dp))
@@ -645,24 +582,23 @@ fun TrackList(p: Player, list: List<Track>, onPlay: (Int) -> Unit, onMenu: (Trac
                     .clickable { onPlay(i) }.padding(start = 12.dp, top = 8.dp, bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Box(
-                    Modifier.size(44.dp).clip(RoundedCornerShape(12.dp)).background(p.accent(t).copy(0.8f)),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    val a = art
-                    if (a != null) Image(a.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-                    else Text("♪", color = Color.White)
-                }
+                ArtBox(p, t, Modifier.size(44.dp), RoundedCornerShape(12.dp), 20.dp)
                 Spacer(Modifier.width(12.dp))
                 Column(Modifier.weight(1f)) {
                     Text(t.title, color = Color.White, fontWeight = FontWeight.Medium, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     Text(t.artist, color = Color.White.copy(0.65f), fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
-                Text(
-                    if (p.isFav(t)) "♥" else "♡", color = if (p.isFav(t)) Color(0xFFFF5C8A) else Color.White.copy(0.7f),
-                    fontSize = 20.sp, modifier = Modifier.clickable { p.toggleFav(t) }.padding(8.dp),
+                val fav = p.isFav(t)
+                Icon(
+                    painterResource(if (fav) R.drawable.ic_heart else R.drawable.ic_heart_outline), null,
+                    Modifier.clickable { p.toggleFav(t) }.padding(8.dp).size(22.dp),
+                    tint = if (fav) Color(0xFFFF5C8A) else Color.White.copy(0.7f),
                 )
-                Text("⋯", color = Color.White, fontSize = 20.sp, modifier = Modifier.clickable { onMenu(t) }.padding(horizontal = 12.dp, vertical = 8.dp))
+                Icon(
+                    painterResource(R.drawable.ic_more), null,
+                    Modifier.clickable { onMenu(t) }.padding(horizontal = 10.dp, vertical = 8.dp).size(24.dp),
+                    tint = Color.White,
+                )
             }
         }
     }

@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -133,7 +134,7 @@ fun NamedList(items: Collection<String>, apply: (String) -> Unit, delete: (Strin
             Text(n, color = Color.White, modifier = Modifier.weight(1f), maxLines = 1)
             GlassButton("Apply") { apply(n) }
             Spacer(Modifier.width(8.dp))
-            GlassButton("✕") { delete(n) }
+            GlassButton("Remove", R.drawable.ic_close) { delete(n) }
         }
     }
 }
@@ -155,11 +156,11 @@ fun SettingsBody(p: Player, act: Actions, modifier: Modifier) {
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(n, color = Color.White, fontWeight = FontWeight.Medium, modifier = Modifier.weight(1f))
-                    Text("›", color = Color.White.copy(0.6f), fontSize = 20.sp)
+                    Icon(painterResource(R.drawable.ic_chevron_right), null, tint = Color.White.copy(0.6f))
                 }
             }
         } else {
-            item { GlassButton("‹ Settings") { sec = null } }
+            item { GlassButton("Settings", R.drawable.ic_back) { sec = null } }
             item {
                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     when (s) {

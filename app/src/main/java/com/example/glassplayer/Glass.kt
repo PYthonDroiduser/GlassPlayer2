@@ -8,6 +8,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,6 +21,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,12 +61,11 @@ fun Backdrop(accent: Color, animate: Boolean = true, alpha: Float = 1f, blurDp: 
 }
 
 @Composable
-fun Ctrl(label: String, active: Boolean, onClick: () -> Unit) {
+fun Ctrl(icon: Int, active: Boolean, onClick: () -> Unit) {
     val tap = LocalTap.current
-    Box(
-        Modifier.size(46.dp).clip(CircleShape).clickable { tap(); onClick() },
-        contentAlignment = Alignment.Center,
-    ) { Text(label, color = if (active) Color.White else Color.White.copy(0.55f), fontSize = 22.sp) }
+    Box(Modifier.size(46.dp).clip(CircleShape).clickable { tap(); onClick() }, contentAlignment = Alignment.Center) {
+        Icon(painterResource(icon), null, Modifier.size(26.dp), tint = if (active) Color.White else Color.White.copy(0.55f))
+    }
 }
 
 @Composable
@@ -77,11 +78,17 @@ fun Chip(label: String, selected: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-fun GlassButton(label: String, onClick: () -> Unit) {
-    Box(
-        Modifier.glass(CircleShape).clickable(onClick = onClick)
-            .padding(horizontal = 15.dp, vertical = 10.dp)
-    ) { Text(label, color = Color.White, fontWeight = FontWeight.Medium, fontSize = 14.sp) }
+fun GlassButton(label: String, icon: Int? = null, onClick: () -> Unit) {
+    Row(
+        Modifier.glass(CircleShape).clickable(onClick = onClick).padding(horizontal = 15.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (icon != null) {
+            Icon(painterResource(icon), null, Modifier.size(16.dp), tint = Color.White)
+            Spacer(Modifier.width(6.dp))
+        }
+        Text(label, color = Color.White, fontWeight = FontWeight.Medium, fontSize = 14.sp)
+    }
 }
 
 fun fmt(ms: Long): String {
