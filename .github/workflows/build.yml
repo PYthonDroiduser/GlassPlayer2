@@ -1,27 +1,28 @@
 name: Build debug APK
+
 on:
   push:
   workflow_dispatch:
-<<<<<<< HEAD
 
 permissions:
   contents: write
 
-=======
->>>>>>> 5eceb731a2381aa1b5a9aca6ab133a23674ac105
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-<<<<<<< HEAD
 
-      - uses: actions/setup-java@v4
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 21
+          java-version: '17'
 
-      - uses: gradle/actions/setup-gradle@v4
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Build debug APK
         run: |
@@ -29,13 +30,13 @@ jobs:
           set -o pipefail
           ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee build.log
 
-      - name: Show build errors on the run summary
+      - name: Show build errors
         if: failure()
         run: |
           {
             echo '### Build errors'
             echo '```'
-            grep -E '^e: |error:|What went wrong|FAILED' -A3 build.log | head -80
+            grep -E '^e: |error:|What went wrong|FAILED' -A3 build.log | head -80 || true
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
@@ -46,14 +47,13 @@ jobs:
           name: build-log
           path: build.log
 
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: GlassPlayer-debug
           path: app/build/outputs/apk/debug/app-debug.apk
 
-      # A release asset downloads straight to a phone, no zip or login needed
-      - name: Publish APK to the latest-debug release
+      - name: Publish APK release
         if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
@@ -61,17 +61,3 @@ jobs:
           name: Latest debug build
           prerelease: true
           files: app/build/outputs/apk/debug/app-debug.apk
-=======
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-      - uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: "8.7"
-      - run: gradle assembleDebug --no-daemon
-      - uses: actions/upload-artifact@v4
-        with:
-          name: GlassPlayer-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
->>>>>>> 5eceb731a2381aa1b5a9aca6ab133a23674ac105
