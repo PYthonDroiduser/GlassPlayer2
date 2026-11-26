@@ -90,7 +90,7 @@ class PlaybackService : Service() {
             .addAction(act(if (p.playing) android.R.drawable.ic_media_pause else android.R.drawable.ic_media_play, "Play or pause", "toggle"))
             .addAction(act(android.R.drawable.ic_media_next, "Next", "next"))
             .setStyle(Notification.MediaStyle().setMediaSession(session.sessionToken).setShowActionsInCompactView(0, 1, 2))
-            .applyOngoing(p.playing)
+            .setOngoing(p.playing)
             .setVisibility(if (p.ui.lockScreen) Notification.VISIBILITY_PUBLIC else Notification.VISIBILITY_PRIVATE)
             .build()
         if (Build.VERSION.SDK_INT >= 29) startForeground(1, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)

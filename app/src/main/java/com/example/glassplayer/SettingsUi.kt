@@ -65,7 +65,7 @@ fun Background(ui: UiSettings, now: Boolean, accent: Color) {
                         VideoView(c).apply {
                             setAudioFocusRequest(AudioManager.AUDIOFOCUS_NONE)
                             setVideoURI(Uri.parse(uri))
-                            applyOnPreparedListener { m ->
+                            setOnPreparedListener { m ->
                                 m.isLooping = true
                                 m.setVolume(0f, 0f)
                                 val ar = m.videoWidth.toFloat() / m.videoHeight
