@@ -103,7 +103,7 @@ class Player(private val ctx: Context) {
             AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA)
                 .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build()
         )
-        .setOnAudioFocusChangeListener { c ->
+        .applyOnAudioFocusChangeListener { c ->
             if (c == AudioManager.AUDIOFOCUS_LOSS || c == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) pause()
         }
         .build()
@@ -256,7 +256,7 @@ class Player(private val ctx: Context) {
         position = 0
         if (autoplay) am.requestAudioFocus(focus)
         mp = MediaPlayer.create(ctx, queue[i].uri)?.apply {
-            setOnCompletionListener { next(true) }
+            applyOnCompletionListener { next(true) }
             if (from > 0) seekTo(from.toInt())
             if (autoplay) start()
         }
@@ -276,11 +276,11 @@ class Player(private val ctx: Context) {
 
     fun pause() { val m = mp ?: return; if (m.isPlaying) m.pause(); playing = false; saveState(); sync() }
     fun resume() { if (!playing) toggle() }
-    fun setSpeed(s: Float) { speed = s; applySpeed() }
+    fun updateSpeed(s: Float) { speed = s; applySpeed() }
     fun setSleep(m: Int) { sleepMin = m; sleepAt = if (m > 0) System.currentTimeMillis() + m * 60_000L else 0L }
 
-    fun setXfade(s: Int) { xfade = s; prefs.edit().putInt("xfade", s).apply() }
-    fun cycleXfade() { val o = listOf(0, 3, 6, 9, 12); setXfade(o[(o.indexOf(xfade) + 1) % o.size]) }
+    fun updateXfade(s: Int) { xfade = s; prefs.edit().putInt("xfade", s).apply() }
+    fun cycleXfade() { val o = listOf(0, 3, 6, 9, 12); updateXfade(o[(o.indexOf(xfade) + 1) % o.size]) }
 
     private fun nextIndex(): Int {
         if (queue.isEmpty()) return -1
@@ -294,9 +294,9 @@ class Player(private val ctx: Context) {
         val nm = MediaPlayer.create(ctx, queue[i].uri) ?: return
         val ms = (xfade * 1000L).coerceAtLeast(1L)
         fading = true
-        old.setOnCompletionListener(null)
+        old.applyOnCompletionListener(null)
         nm.setVolume(0f, 0f)
-        nm.setOnCompletionListener { next(true) }
+        nm.applyOnCompletionListener { next(true) }
         nm.start()
         mp = nm; qi = i; position = 0; playing = true
         fx.attach(nm.audioSessionId); attachViz(); applySpeed()
@@ -351,7 +351,7 @@ class Player(private val ctx: Context) {
     }
 
     private fun applySpeed() {
-        runCatching { mp?.let { if (it.isPlaying) it.playbackParams = it.playbackParams.setSpeed(speed) } }
+        runCatching { mp?.let { if (it.isPlaying) it.playbackParams = it.playbackParams.updateSpeed(speed) } }
     }
 
     fun playNext(t: Track) { if (queue.isEmpty()) playList(listOf(t), 0) else queue.add(qi + 1, t) }
