@@ -10,13 +10,8 @@ android {
         applicationId = "com.example.glassplayer"
         minSdk = 26
         targetSdk = 34
-<<<<<<< HEAD
         versionCode = 3
         versionName = "3.0"
-=======
-        versionCode = 1
-        versionName = "1.0"
->>>>>>> 5eceb731a2381aa1b5a9aca6ab133a23674ac105
     }
     buildFeatures { compose = true }
     composeOptions { kotlinCompilerExtensionVersion = "1.5.14" }

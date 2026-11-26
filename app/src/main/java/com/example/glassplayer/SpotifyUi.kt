@@ -45,11 +45,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-<<<<<<< HEAD
 enum class Nav { HOME, SEARCH, LIBRARY, SERVICES, SETTINGS }
-=======
-enum class Nav { HOME, SEARCH, LIBRARY, SETTINGS }
->>>>>>> 5eceb731a2381aa1b5a9aca6ab133a23674ac105
 
 private fun tileColor(name: String) = Color.hsv(name.hashCode().mod(360).toFloat(), 0.55f, 0.75f)
 private fun tileBrush(name: String) = Brush.linearGradient(listOf(tileColor(name), Color(0xFF1B1B2F)))
@@ -60,12 +56,8 @@ fun BottomBar(nav: Nav, onSelect: (Nav) -> Unit) {
     val tabs = listOf(
         Triple(Nav.HOME, R.drawable.ic_home, "Home"),
         Triple(Nav.SEARCH, R.drawable.ic_search, "Search"),
-<<<<<<< HEAD
         Triple(Nav.LIBRARY, R.drawable.ic_library, "Library"),
         Triple(Nav.SERVICES, R.drawable.ic_apps, "Services"),
-=======
-        Triple(Nav.LIBRARY, R.drawable.ic_library, "Your Library"),
->>>>>>> 5eceb731a2381aa1b5a9aca6ab133a23674ac105
     )
     val idx = tabs.indexOfFirst { it.first == nav }
     var last by remember { mutableIntStateOf(0) }
@@ -84,20 +76,12 @@ fun BottomBar(nav: Nav, onSelect: (Nav) -> Unit) {
             .pointerInput(Unit) {
                 // Drag across the bar and the pill follows your finger
                 detectHorizontalDragGestures { change, _ ->
-<<<<<<< HEAD
                     val i = (change.position.x / (size.width / tabs.size.toFloat())).toInt().coerceIn(0, tabs.size - 1)
-=======
-                    val i = (change.position.x / (size.width / 3f)).toInt().coerceIn(0, 2)
->>>>>>> 5eceb731a2381aa1b5a9aca6ab133a23674ac105
                     if (tabs[i].first != cur.value) { tap(); onSel.value(tabs[i].first) }
                 }
             },
     ) {
-<<<<<<< HEAD
         val itemW = maxWidth / tabs.size
-=======
-        val itemW = maxWidth / 3
->>>>>>> 5eceb731a2381aa1b5a9aca6ab133a23674ac105
         val lo = minOf(fast, slow)
         val hi = maxOf(fast, slow)
         val squash = 1f - 0.12f * (hi - lo).coerceIn(0f, 1f)
