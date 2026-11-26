@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.VIBRATE" />
+<<<<<<< HEAD
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
@@ -19,6 +20,11 @@
         <package android:name="com.soundcloud.android" />
     </queries>
 
+=======
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+
+>>>>>>> 5eceb731a2381aa1b5a9aca6ab133a23674ac105
     <application
         android:name=".GlassApp"
         android:icon="@mipmap/ic_launcher"
@@ -27,12 +33,17 @@
         android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
         <activity
             android:name=".MainActivity"
+<<<<<<< HEAD
             android:exported="true"
             android:launchMode="singleTop">
+=======
+            android:exported="true">
+>>>>>>> 5eceb731a2381aa1b5a9aca6ab133a23674ac105
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+<<<<<<< HEAD
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -50,6 +61,10 @@
             </intent-filter>
         </service>
         <service
+=======
+        </activity>
+        <service
+>>>>>>> 5eceb731a2381aa1b5a9aca6ab133a23674ac105
             android:name=".PlaybackService"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />

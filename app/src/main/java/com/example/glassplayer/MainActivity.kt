@@ -88,8 +88,11 @@ class Player(private val ctx: Context) {
     val fx = Fx(prefs)
     val ui = UiSettings(prefs)
     val mixer = Mixer(prefs)
+<<<<<<< HEAD
     val sources = Sources(ctx)
     val cloud = Cloud(ctx, prefs)
+=======
+>>>>>>> 5eceb731a2381aa1b5a9aca6ab133a23674ac105
     val viz = Viz()
     private val vib = ctx.getSystemService(Vibrator::class.java)
     private val shake = Shake(ctx, { ui.shakeLevel }) { onShake() }
@@ -336,7 +339,10 @@ class Player(private val ctx: Context) {
         fg = on
         if (on && ui.shake) shake.start() else shake.stop()
         if (on) attachViz() else viz.release()
+<<<<<<< HEAD
         if (on) sources.refresh() else sources.stop()
+=======
+>>>>>>> 5eceb731a2381aa1b5a9aca6ab133a23674ac105
     }
 
     private fun saveState() {
@@ -398,7 +404,10 @@ class Player(private val ctx: Context) {
 
     fun tick() {
         if (playing) position = mp?.currentPosition?.toLong() ?: 0L
+<<<<<<< HEAD
         sources.tick()
+=======
+>>>>>>> 5eceb731a2381aa1b5a9aca6ab133a23674ac105
         if (playing && ++saveTick >= 80) { saveTick = 0; saveState() }
         if (xfade > 0 && playing && !fading && loop != Loop.ONE) {
             val m = mp
@@ -420,15 +429,21 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+<<<<<<< HEAD
         handleIntent(intent)
+=======
+>>>>>>> 5eceb731a2381aa1b5a9aca6ab133a23674ac105
         setContent {
             App((application as GlassApp).player)
         }
     }
 
+<<<<<<< HEAD
     override fun onNewIntent(intent: Intent) { super.onNewIntent(intent); handleIntent(intent) }
     private fun handleIntent(i: Intent?) { i?.data?.let { (application as GlassApp).player.cloud.onRedirect(it) } }
 
+=======
+>>>>>>> 5eceb731a2381aa1b5a9aca6ab133a23674ac105
     override fun onStart() { super.onStart(); (application as GlassApp).player.foreground(true) }
     override fun onStop() { (application as GlassApp).player.foreground(false); super.onStop() }
 }
@@ -514,7 +529,10 @@ fun App(p: Player) {
                             Nav.HOME -> HomeScreen(p, act, { menu = it }, { newPl = true }, { nav = Nav.SETTINGS }, homeOpened)
                             Nav.SEARCH -> SearchScreen(p, act, { menu = it }, { newPl = true }, searchQ, searchGenre)
                             Nav.LIBRARY -> LibraryScreen(p, act, libTab, { libTab = it }, libOpen, { libOpen = it }, { menu = it }, { newPl = true }, libQ)
+<<<<<<< HEAD
                             Nav.SERVICES -> ServicesScreen(p)
+=======
+>>>>>>> 5eceb731a2381aa1b5a9aca6ab133a23674ac105
                             Nav.SETTINGS -> Column {
                                 GlassButton("Back", R.drawable.ic_back) { nav = Nav.HOME }
                                 Spacer(Modifier.height(12.dp))
