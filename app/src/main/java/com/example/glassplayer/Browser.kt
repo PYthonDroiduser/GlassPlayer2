@@ -72,6 +72,7 @@ private fun makeBrowser(ctx: Context, b: Browser) = WebView(ctx).apply {
     settings.userAgentString = "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36"
     CookieManager.getInstance().setAcceptCookie(true)
     CookieManager.getInstance().setAcceptThirdPartyCookies(this, true)
+    enableGlassDownloads(ctx)
     webViewClient = object : WebViewClient() {
         override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
             val scheme = request.url.scheme
@@ -139,5 +140,50 @@ fun BrowserScreen(b: Browser) {
             },
             modifier = Modifier.weight(1f).fillMaxWidth().clip(RoundedCornerShape(24.dp)),
         )
+    }
+}
+
+// Shared Chrome-style download handler for GlassPlayer WebViews
+fun android.webkit.WebView.enableGlassDownloads(context: Context) {
+    setDownloadListener { url, userAgent, contentDisposition, mimeType, _ ->
+
+        if (!url.startsWith("https://") && !url.startsWith("http://")) {
+            return@setDownloadListener
+        }
+
+        val filename = android.webkit.URLUtil.guessFileName(
+            url, contentDisposition, mimeType
+        )
+
+        val request = android.app.DownloadManager.Request(Uri.parse(url)).apply {
+            setTitle(filename)
+            setDescription("Downloading with GlassPlayer")
+            setNotificationVisibility(
+                android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED
+            )
+            setDestinationInExternalPublicDir(
+                android.os.Environment.DIRECTORY_DOWNLOADS, filename
+            )
+            setAllowedOverMetered(true)
+            setAllowedOverRoaming(false)
+
+            if (!mimeType.isNullOrBlank()) setMimeType(mimeType)
+            if (!userAgent.isNullOrBlank()) addRequestHeader("User-Agent", userAgent)
+
+            android.webkit.CookieManager.getInstance().getCookie(url)?.let {
+                addRequestHeader("Cookie", it)
+            }
+        }
+
+        val manager = context.getSystemService(
+            Context.DOWNLOAD_SERVICE
+        ) as android.app.DownloadManager
+
+        runCatching { manager.enqueue(request) }
+            .onFailure {
+                android.widget.Toast.makeText(
+                    context, "Download failed to start", android.widget.Toast.LENGTH_LONG
+                ).show()
+            }
     }
 }
